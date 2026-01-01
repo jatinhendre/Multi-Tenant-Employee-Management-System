@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, models } from "mongoose";
 export interface IUser extends Document {
   email: string;
   password: string;
+  company: Schema.Types.ObjectId;
   role: "SUPERADMIN" | "COMPANY_ADMIN" | "EMPLOYEE";
 }
 
@@ -14,6 +15,10 @@ const UserSchema = new Schema<IUser>({
     enum: ["SUPERADMIN", "COMPANY_ADMIN", "EMPLOYEE"],
     required: true,
   },
+  company:{
+    type: Schema.Types.ObjectId,
+    ref: "Company"
+  }
 });
 
 export const User =

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import DashboardLayout from "./(dashboard)/layout";
 
 export default function DashboardHome() {
   const [role, setRole] = useState<string | null>(null);
@@ -25,7 +26,8 @@ export default function DashboardHome() {
   if (!role) return null;
 
   return (
-    <main className="p-6">
+    <DashboardLayout>
+      <main className="p-6">
       {role === "COMPANY_ADMIN" && (
         <>
           <h1 className="text-3xl font-bold mb-2">
@@ -63,5 +65,6 @@ export default function DashboardHome() {
         </>
       )}
     </main>
+    </DashboardLayout>
   );
 }

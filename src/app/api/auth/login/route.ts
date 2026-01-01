@@ -16,11 +16,14 @@ export async function POST(req: Request) {
       { status: 401 }
     );
   }
-  let company = null;
-
+  let company=null;
   if (user.role === "COMPANY_ADMIN") {
     company = await Company.findOne({ adminEmail: email }).lean();
   }
+  if (user.role === "EMPLOYEE") {
+  // find which company owns this employee
+  company = await Company.findOne({_id:user.company}).lean(); // temporary fallback
+}
   return NextResponse.json({
     message: "Login success",
     role: user.role,

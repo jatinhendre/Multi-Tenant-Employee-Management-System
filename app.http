@@ -11,3 +11,16 @@ Content-Type: application/json
   "requirements": ["Create task"],
   "status": "PENDING"
 }
+
+
+###
+
+POST http://localhost:3000/api/employees/add 
+Content-Type: application/json
+
+{
+    "name":"jatin",
+    "email":"jatin@gmail.com",
+    "position":"admin",
+    "companyDb":"company_solanki_and_sons_a5860"
+}

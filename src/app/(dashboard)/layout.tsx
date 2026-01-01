@@ -1,5 +1,7 @@
+"use client"
+
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function DashboardLayout({
   children,
@@ -49,6 +51,9 @@ export default function DashboardLayout({
         {/* Navbar */}
         <header className="bg-black border-b p-4 flex justify-between">
           <span className="font-medium">Welcome 👋</span>
+          <a href="/landing" className="text-gray-600">
+  Home
+</a>
           <button
   onClick={() => {
     localStorage.removeItem("user");
@@ -62,7 +67,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Page Content */}
-        <main className="p-6">{children}</main>
+        <main className="bg-black p-6">{children}</main>
       </div>
     </section>
   );

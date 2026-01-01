@@ -23,14 +23,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
   
-  const safe = pending.companyName
+  const raw = pending.companyName
   .toLowerCase()
   .replace(/\s+/g, "_")
   .replace(/[^a-z0-9_]/g, "")
-  .replace(/^_+|_+$/g, "")
-  .slice(0, 50);
+  .replace(/^_+|_+$/g, "");
 
-  const dbName = `company_${safe}_${pending._id.toString().slice(-5)}`;
+const safe = raw.slice(0, 24);   // <= 24 chars
+
+const dbName = `company_${safe}_${pending._id.toString().slice(-5)}`;
 
   // 2️⃣ Save company metadata in platform DB
   let company = await Company.findOne({ dbName });
@@ -63,6 +64,7 @@ if (!admin) {
     email: pending.adminEmail,
     password: pending.adminPassword,
     role: "COMPANY_ADMIN",
+    company: company._id,
   });
 }
 

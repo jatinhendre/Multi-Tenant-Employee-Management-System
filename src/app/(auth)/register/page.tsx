@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import BrandLogo from "../../../../components/logo";
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -38,10 +39,13 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center">
-      <div className="w-full max-w-xl bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-slate-100">
+      <div className="w-full max-w-xl bg-white p-8 md:p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-extrabold text-slate-900">Partner with Us</h1>
-          <p className="text-slate-500 mt-2 font-medium">Fill in your company details for approval</p>
+          <div className="flex justify-center mb-4">
+            <BrandLogo size={64} className="shadow-lg" />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Deploy <span className="text-indigo-600">SynTask</span> Instance</h1>
+          <p className="text-slate-500 font-medium">Initialize your company private cloud infrastructure</p>
         </div>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">

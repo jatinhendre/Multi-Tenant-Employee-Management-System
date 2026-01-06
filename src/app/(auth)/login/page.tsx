@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import BrandLogo from "../../../../components/logo";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
@@ -46,10 +48,13 @@ export default function LoginPage() {
 
   return (
     <main className="flex items-center justify-center min-h-screen bg-slate-50 p-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-2xl border border-slate-100">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
-          <p className="text-slate-500 mt-2 font-medium">Sign in to your dashboard</p>
+          <div className="inline-block p-1 bg-slate-50 rounded-2xl mb-4">
+            <BrandLogo size={60} />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900">SynTask Access</h1>
+          <p className="text-slate-500 font-medium">Authentication required to proceed</p>
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
@@ -63,7 +68,7 @@ export default function LoginPage() {
           </div>
 
           <button disabled={loading} className="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold shadow-md shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:opacity-70">
-            {loading ? "Verifying..." : "Sign In"}
+            {loading ? "Syncing..." : "Login to SynTask"}
           </button>
         </form>
 

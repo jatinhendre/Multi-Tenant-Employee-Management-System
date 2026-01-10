@@ -19,6 +19,7 @@ export default function ApproveButton({ id }: { id: string }) {
 
   return (
     <button
+    type="button"
       onClick={handleApprove}
       className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all active:scale-95"
     >

@@ -9,17 +9,15 @@ interface User {
   role: "COMPANY_ADMIN" | "SUPERADMIN" | "EMPLOYEE";
   company?: string | null; // ID reference
 }
-
-interface Company {
+interface ISessionCompany {
   _id: string;
   name: string;
   dbName: string;
-  status: string;
 }
 
 interface SessionContextType {
   user: User | null;
-  company: Company | null;
+  company: ISessionCompany | null;
 }
 
 const SessionContext = createContext<SessionContextType>({
@@ -36,7 +34,7 @@ export default function SessionProvider({
 }: {
   children: React.ReactNode;
   user: User | null;
-  company: Company | null;
+  company: ISessionCompany | null;
 }) {
   return (
     <SessionContext.Provider value={{ user, company }}>

@@ -7,17 +7,20 @@ import { connectTenantDB } from "./tenantDB";
 import { getEmployeeModel } from "../models/tenant/Employee";
 import { JWTPayload } from "./JWTPayload";
 
+// 1. Define a strict type for Roles
+type UserRole = "SUPERADMIN" | "COMPANY_ADMIN" | "EMPLOYEE";
+
 interface ISystemUser {
   _id: string;
   email: string;
-  role: string;
+  role: UserRole; // ✅ Changed from string
   company?: string;
 }
 
 interface ISessionUser {
   _id: string;
   email: string;
-  role: string;
+  role: UserRole; // ✅ Changed from string
   name?: string;
 }
 
@@ -71,7 +74,8 @@ export async function getSessionData(): Promise<SessionResponse> {
       if (!employee) return { user: null, company: null };
 
       return {
-        user: JSON.parse(JSON.stringify({ ...employee, role: "EMPLOYEE" })) as ISessionUser,
+        // ✅ Explicitly cast the role to UserRole
+        user: JSON.parse(JSON.stringify({ ...employee, role: "EMPLOYEE" as UserRole })) as ISessionUser,
         company: JSON.parse(JSON.stringify(companyContext))
       };
     }

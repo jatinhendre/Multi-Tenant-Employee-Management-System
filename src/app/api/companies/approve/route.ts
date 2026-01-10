@@ -73,5 +73,5 @@ if (!admin) {
 );
 
 
-  return NextResponse.redirect(new URL("/superadmin", req.url));
+  return NextResponse.json({success:true})
 }

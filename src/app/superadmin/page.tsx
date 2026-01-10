@@ -59,12 +59,28 @@ export default async function SuperAdminPage() {
               <div key={c._id.toString()} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-xl font-bold text-slate-900 mb-1">{c.companyName}</h3>
                 <p className="text-sm text-slate-500 mb-6 font-medium">{c.adminEmail}</p>
-                <form action={`/api/companies/approve`} method="POST">
+                
                   <input type="hidden" name="id" value={c._id.toString()} />
-                  <button className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all active:scale-95">
-                    Approve Instance
-                  </button>
-                </form>
+                  <button
+  onClick={async () => {
+    const formData = new FormData();
+    formData.append("id", c._id.toString());
+
+    const res = await fetch("/api/companies/approve", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (res.ok) {
+      window.location.reload(); // or redirect if needed
+    }
+  }}
+  className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all active:scale-95"
+>
+  Approve Instance
+</button>
+
+                
               </div>
             ))}
             {pendingCompanies.length === 0 && (

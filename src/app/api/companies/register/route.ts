@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       requirements,
     });
     const email:string = "jatin.17776@sakec.ac.in";
-    notifyToApprove(
+    await notifyToApprove(
       email,
       companyName
     )

@@ -2,7 +2,7 @@ import BrandLogo from "../../../components/logo";
 import { connectDB } from "../../../lib/db";
 import { PendingCompany } from "../../../models/PendingCompany";
 import ApproveButton from "./ApproveButton";
-
+export const dynamic = "force-dynamic";
 interface PendingCompanyType {
   _id: string;
   companyName: string;

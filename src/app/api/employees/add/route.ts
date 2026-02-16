@@ -8,11 +8,8 @@ import { Company } from "../../../../../models/Company";
 
 export async function POST(req: Request) {
   await connectDB();
-  
-  // Destructure exactly what frontend sends (use camelCase to avoid arithmetic error)
   const { email, companyDb, name, position, contactEmail } = await req.json();
 
-  // Guard against missing recipient
   if (!contactEmail) {
     return NextResponse.json({ message: "Recipient contact email is missing" }, { status: 400 });
   }
@@ -28,18 +25,17 @@ export async function POST(req: Request) {
   try {
     await Employee.create({
       name,
-      email, // This is the official Login ID
+      email,
       password: hashed,
       position,
     });
 
-    // Pass 5 arguments as per our new function signature
     await sendWelcomeEmail(
-      contactEmail,       // 'to'
-      name,               // 'name'
-      email,              // 'loginEmail'
-      company.name,       // 'companyName'
-      company._id.toString() // 'companyId'
+      contactEmail,      
+      name,               
+      email,             
+      company.name,       
+      company._id.toString() 
     );
 
     return NextResponse.json({ message: "Employee onboarded successfully" }, { status: 201 });

@@ -21,8 +21,8 @@ export default function EmployeesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         name: formData.get("name"),
-        email: formData.get("email"), // This is their Login ID
-        contactEmail: formData.get("contact_email"), // This is where we send the mail
+        email: formData.get("email"), 
+        contactEmail: formData.get("contact_email"), 
         position: formData.get("position"),
         companyDb: company.dbName
       }),

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-// Import useSession to get data securely from the server context
 import { useSession } from "../../../../../components/provider/SessionProvider"; 
 
 interface TaskPayload {
@@ -14,7 +13,7 @@ interface TaskPayload {
 }
 
 interface Employee {
-  _id: string; // Added _id for key
+  _id: string; 
   name: string;
   email: string;
   position: string;
@@ -22,7 +21,6 @@ interface Employee {
 }
 
 export default function TasksPage() {
-  // ✅ FIX: Use Session Provider instead of localStorage
   const { company } = useSession(); 
   
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -30,7 +28,6 @@ export default function TasksPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Use useCallback to prevent infinite loops in useEffect
   const loadEmployees = useCallback(async (db: string) => {
     try {
       const res = await fetch(`/api/employees/list?db=${db}`);
@@ -47,7 +44,6 @@ export default function TasksPage() {
     } catch (e) { console.error("Err loading tasks", e); }
   }, []);
 
-  // ✅ FIX: Trigger data load when 'company' is available from Session
   useEffect(() => {
     if (company?.dbName) {
       loadEmployees(company.dbName);
@@ -59,7 +55,7 @@ export default function TasksPage() {
     e.preventDefault();
     setMessage("");
     
-    if (!company?.dbName) return; // Guard clause
+    if (!company?.dbName) return; 
     setLoading(true);
 
     const form = e.currentTarget;
@@ -73,7 +69,7 @@ export default function TasksPage() {
         description: formData.get("description"),
         assignedTo: formData.get("assignedTo"),
         dueDate: formData.get("dueDate"),
-        companyDb: company.dbName, // Use dbName from context
+        companyDb: company.dbName, 
       }),
     });
 
@@ -86,8 +82,6 @@ export default function TasksPage() {
     }
     setLoading(false);
   }
-
-  // Show loading state if session isn't ready yet
   if (!company) return <div className="p-8 text-slate-400 animate-pulse">Loading workspace...</div>;
 
   return (

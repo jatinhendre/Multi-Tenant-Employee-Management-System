@@ -7,7 +7,7 @@ export async function GET() {
   await connectDB();
 
   const email = "superadmin@saas.com";
-  const password = "admin123"; // later: hash it
+  const password = "admin123"; 
   const hashed = await bcrypt.hash(password, 10);
 
   const exists = await User.findOne({ email });

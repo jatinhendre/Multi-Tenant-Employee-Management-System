@@ -35,7 +35,6 @@ const safe = raw.slice(0, 24);   // <= 24 chars
 
 const dbName = `company_${safe}_${pending._id.toString().slice(-5)}`;
 
-  // 2️⃣ Save company metadata in platform DB
   let company = await Company.findOne({ dbName });
 
 if (!company) {
@@ -46,13 +45,9 @@ if (!company) {
   });
 }
 
-
-  // 3️⃣ Create dedicated company DB
   const tenantDB = await connectTenantDB(dbName);
-    // --- Create Employee model for tenant DB ---
 const Employee = getEmployeeModel(tenantDB);
 
-  // Create admin user in platform DB
   let admin = await User.findOne({ email: pending.adminEmail });
 if (!admin) {
   admin = await User.create({
@@ -64,7 +59,6 @@ if (!admin) {
 }
 
 
-  // 5️⃣ (Optional now) mark pending as approved
   pending.status = "APPROVED";
   await pending.save();
   await sendApprovalEmail(

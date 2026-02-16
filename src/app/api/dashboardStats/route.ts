@@ -14,7 +14,6 @@ export async function GET(req: Request) {
     const Employee = getEmployeeModel(conn);
     const Task = getTaskModel(conn);
 
-    // ✅ Performance Optimization: Saari queries parallel mein chalengi
     const [empCount, pendingCount, completedCount] = await Promise.all([
       Employee.countDocuments({ status: "ACTIVE" }),
       Task.countDocuments({ status: { $ne: "COMPLETED" } }),

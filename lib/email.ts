@@ -95,7 +95,7 @@ export async function sendWelcomeEmail(to: string, name: string, loginEmail: str
         </div>
       </div>
     `,
-    attachments: [{ filename: "logo.jpg", path: logoPath, cid: "logo" }],
+    attachments: [{ filename: "syntask_logo.jpg", path: logoPath, cid: "logo" }],
   });
 }
 

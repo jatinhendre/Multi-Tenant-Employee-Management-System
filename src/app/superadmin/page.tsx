@@ -13,18 +13,16 @@ interface PendingCompanyType {
 
 export default async function SuperAdminPage() {
   await connectDB();
-
-  // Data fetching logic
   const pendingCompanies = await PendingCompany.find({ status: "PENDING" }).sort({ createdAt: -1 }).lean<PendingCompanyType[]>();
   const activeCompanies = await PendingCompany.find({ status: "APPROVED" }).sort({ createdAt: -1 }).lean<PendingCompanyType[]>();
 
   return (
     <main className="min-h-screen bg-slate-50 p-6 md:p-12 text-slate-900">
-      {/* Branding Header Section */}
+  
       <header className="max-w-6xl mx-auto mb-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            {/* Integrated the reusable BrandLogo component */}
+           
             <BrandLogo size={56} className="shadow-md border-2 border-white" />
             <div>
               <h1 className="text-4xl font-black text-slate-900 tracking-tight">
@@ -34,7 +32,6 @@ export default async function SuperAdminPage() {
             </div>
           </div>
 
-          {/* Statistics Bar */}
           <div className="flex gap-4">
             <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 text-center">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Requests</p>
@@ -49,7 +46,7 @@ export default async function SuperAdminPage() {
       </header>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 gap-12">
-        {/* Pending Requests Section */}
+
         <section>
           <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse"></span>
@@ -73,7 +70,6 @@ export default async function SuperAdminPage() {
           </div>
         </section>
 
-        {/* Active Nodes Section */}
         <section>
           <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>

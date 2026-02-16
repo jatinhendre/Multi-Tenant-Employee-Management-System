@@ -2,12 +2,12 @@
 
 import React, { createContext, useContext } from "react";
 
-// Define the shape of your User and Company based on your models
+
 interface User {
   _id: string;
   email: string;
   role: "COMPANY_ADMIN" | "SUPERADMIN" | "EMPLOYEE";
-  company?: string | null; // ID reference
+  company?: string | null; 
 }
 interface ISessionCompany {
   _id: string;

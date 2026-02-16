@@ -11,7 +11,7 @@ export default function ApproveButton({ id }: { id: string }) {
     });
 
     if (res.ok) {
-      window.location.reload(); // refresh list
+      window.location.reload(); 
     } else {
       alert("Approval failed");
     }

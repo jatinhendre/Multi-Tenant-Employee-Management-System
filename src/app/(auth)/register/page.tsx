@@ -3,7 +3,6 @@
 import { useState } from "react";
 import BrandLogo from "../../../../components/logo";
 
-
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -30,7 +29,9 @@ export default function RegisterPage() {
 
     const data = await res.json();
     if (res.ok) {
-      setMessage("Application Successful! Our team will review and approve your company shortly.");
+      setMessage(
+        "Application Successful! Our team will review and approve your company shortly."
+      );
       form.reset();
     } else {
       setMessage(data.message || "Registration failed");
@@ -39,59 +40,122 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center">
-      <div className="w-full max-w-xl bg-white p-8 md:p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
-        <div className="text-center mb-10">
-          <div className="flex justify-center mb-4">
-            <BrandLogo size={64} className="shadow-lg" />
+    <main className="flex items-center justify-center min-h-screen bg-muted/40 p-4 py-8">
+      <div className="w-full max-w-2xl space-y-6">
+        <div className="text-center space-y-2">
+          <div className="flex justify-center mb-6">
+            <BrandLogo size={48} className="rounded-xl" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Deploy <span className="text-indigo-600">SynTask</span> Instance</h1>
-          <p className="text-slate-500 font-medium">Initialize your company private infrastructure</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Deploy New Instance
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Initialize your company's private infrastructure
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-1">Company Name</label>
-            <input name="companyName" required className="w-full border border-slate-300 bg-white text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Company Size</label>
-            <input name="companySize" type="number" required className="w-full border border-slate-300 bg-white text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Industry Need</label>
-            <select name="requirement" className="w-full border border-slate-300 bg-white text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-              <option value="TASK_ASSIGNMENT">
-                Basic Package
-              </option>
-            </select>
-          </div>
-          <div className="md:col-span-2 border-t border-slate-100 pt-5 mt-2">
-            <h3 className="text-sm font-bold text-indigo-600 uppercase tracking-wider mb-4">Admin Credentials</h3>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Admin Email</label>
-            <input name="adminEmail" type="email" required className="w-full border border-slate-300 bg-white text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Admin Password</label>
-            <input name="adminPassword" type="password" required className="w-full border border-slate-300 bg-white text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-1">Contact Email</label>
-            <input name="contactEmail" type="email" required className="w-full border border-slate-300 bg-white text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-          </div>
+        <div className="bg-card p-8 rounded-lg border border-border shadow-sm">
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            <div className="md:col-span-2 space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Company Name
+              </label>
+              <input
+                name="companyName"
+                required
+                placeholder="Acme Inc."
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Company Size
+              </label>
+              <input
+                name="companySize"
+                type="number"
+                required
+                placeholder="10"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Industry Need
+              </label>
+              <select
+                name="requirement"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="TASK_ASSIGNMENT">Basic Package</option>
+              </select>
+            </div>
 
-          <button disabled={loading} className="md:col-span-2 mt-4 bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 active:scale-[0.98]">
-            {loading ? "Processing..." : "Submit Registration Request"}
-          </button>
-        </form>
+            <div className="md:col-span-2 pt-4">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                Admin Credentials
+              </h3>
+              <div className="h-px bg-border w-full mb-4"></div>
+            </div>
 
-        {message && (
-          <div className={`mt-8 p-4 rounded-xl text-center text-sm font-semibold border ${message.includes('Successful') ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'}`}>
-            {message}
-          </div>
-        )}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Admin Email
+              </label>
+              <input
+                name="adminEmail"
+                type="email"
+                required
+                placeholder="admin@acme.com"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Admin Password
+              </label>
+              <input
+                name="adminPassword"
+                type="password"
+                required
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Contact Email
+              </label>
+              <input
+                name="contactEmail"
+                type="email"
+                required
+                placeholder="support@acme.com"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            <button
+              disabled={loading}
+              className="md:col-span-2 mt-4 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+            >
+              {loading ? "Processing..." : "Submit Registration Request"}
+            </button>
+          </form>
+
+          {message && (
+            <div
+              className={`mt-6 p-4 rounded-md text-center text-sm font-medium border ${message.includes("Successful")
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                  : "bg-red-50 text-red-700 border-red-100"
+                }`}
+            >
+              {message}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

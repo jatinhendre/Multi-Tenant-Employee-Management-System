@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import BrandLogo from "../../../../components/logo";
 
@@ -15,13 +14,16 @@ export default function LoginPage() {
 
     const form = e.currentTarget;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
-    const companyId = (form.elements.namedItem("companyId") as HTMLInputElement).value || undefined;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
+    const companyId =
+      (form.elements.namedItem("companyId") as HTMLInputElement).value ||
+      undefined;
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password,companyId }),
+        body: JSON.stringify({ email, password, companyId }),
       });
 
       const data = await res.json();
@@ -39,70 +41,88 @@ export default function LoginPage() {
       setLoading(false);
     }
   }
-  
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-slate-50 p-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-2xl border border-slate-100">
-        <div className="text-center mb-8">
-          <div className="inline-block p-1 bg-slate-50 rounded-2xl mb-4">
-            <BrandLogo size={60} />
+    <main className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
+      <div className="w-full max-w-[400px] space-y-6">
+        <div className="text-center space-y-2">
+          <div className="flex justify-center mb-6">
+            <BrandLogo size={48} className="rounded-xl" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900">SynTask Access</h1>
-          <p className="text-slate-500 font-medium">Authentication required to proceed</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Welcome back
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Enter your credentials to access the workspace
+          </p>
         </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-  {/* Email Input */}
-  <div className="space-y-1">
-    <label className="text-xs font-bold text-slate-700 uppercase ml-1">Email</label>
-    <input 
-      name="email" 
-      type="email" 
-      placeholder="email@example.com" 
-      required 
-      className="w-full p-3 border border-slate-300 rounded-xl bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-400" 
-    />
-  </div>
+        <div className="bg-card p-8 rounded-lg border border-border shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Email
+              </label>
+              <input
+                name="email"
+                type="email"
+                placeholder="name@example.com"
+                required
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
 
-  {/* Password Input */}
-  <div className="space-y-1">
-    <label className="text-xs font-bold text-slate-700 uppercase ml-1">Password</label>
-    <input 
-      name="password" 
-      type="password" 
-      placeholder="••••••••" 
-      required 
-      className="w-full p-3 border border-slate-300 rounded-xl bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-400" 
-    />
-  </div>
-  
-  {/* Employee Specific Section */}
-  <div className="bg-indigo-50 p-5 rounded-2xl border border-indigo-100 shadow-sm mt-4">
-    <label className="text-xs font-bold text-indigo-600 uppercase tracking-widest block mb-2">
-      Employee Access Center
-    </label>
-    <input 
-      name="companyId" 
-      type="text" 
-      placeholder="Organization ID (e.g. 6582c94...)" 
-      className="w-full p-3 bg-white border border-indigo-200 rounded-lg text-slate-900 text-sm outline-none focus:border-indigo-500 transition-all placeholder:text-indigo-300 font-mono" 
-    />
-    <p className="text-[10px] text-indigo-400 mt-2 font-medium italic">
-      *Only required for Staff/Employee logins. Admins can leave this blank.
-    </p>
-  </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Password
+              </label>
+              <input
+                name="password"
+                type="password"
+                required
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
 
-  <button className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all mt-2">
-    Login
-  </button>
-</form>
+            <div className="pt-2">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    Employee Access
+                  </span>
+                </div>
+              </div>
 
-        {message && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-semibold text-center">
-            {message}
-          </div>
-        )}
+              <div className="mt-4 space-y-2">
+                <label className="text-sm font-medium leading-none text-muted-foreground">
+                  Organization ID (Optional)
+                </label>
+                <input
+                  name="companyId"
+                  type="text"
+                  placeholder="e.g. 6582c94..."
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 font-mono"
+                />
+              </div>
+            </div>
+
+            <button
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 w-full mt-4"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-md text-red-600 text-sm font-medium text-center">
+              {message}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

@@ -20,8 +20,11 @@ interface IUserAuth {
 
 export async function POST(req: Request) {
   await connectDB();
+  
   const { email, password, companyId } = await req.json();
-
+  console.log(email)
+  console.log(companyId)
+  console.log(password)
   const systemUser = await User.findOne({ email });
 
   if (systemUser) {
@@ -39,16 +42,20 @@ export async function POST(req: Request) {
   if (!companyId) {
     return NextResponse.json({ message: "Company ID required for employee login" }, { status: 400 });
   }
-
+  console.log("going to find company")
   const targetCompany = (await Company.findById(companyId).lean()) as ICompanyAuth | null;
+  console.log("reutrnd company")
 
   if (!targetCompany) {
     return NextResponse.json({ message: "Organization not found" }, { status: 404 });
   }
-
+  console.log("going to search for conect tenantdb")
   const tenantConn = await connectTenantDB(targetCompany.dbName);
+  console.log("returned from conect tenantdb")
   const Employee = getEmployeeModel(tenantConn);
+  console.log("going to find employee")
   const employee = await Employee.findOne({ email });
+  console.log("returned from employee")
 
   if (!employee) {
     return NextResponse.json({ message: "Employee not found in this organization" }, { status: 404 });

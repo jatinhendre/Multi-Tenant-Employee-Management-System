@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useSession } from "../../../../../components/provider/SessionProvider"; 
+import { useSession } from "../../../../../components/provider/SessionProvider";
 
 interface TaskPayload {
   _id: string;
@@ -13,7 +13,7 @@ interface TaskPayload {
 }
 
 interface Employee {
-  _id: string; 
+  _id: string;
   name: string;
   email: string;
   position: string;
@@ -21,8 +21,8 @@ interface Employee {
 }
 
 export default function TasksPage() {
-  const { company } = useSession(); 
-  
+  const { company } = useSession();
+
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [tasks, setTasks] = useState<TaskPayload[]>([]);
   const [message, setMessage] = useState("");
@@ -33,7 +33,9 @@ export default function TasksPage() {
       const res = await fetch(`/api/employees/list?db=${db}`);
       const data = await res.json();
       setEmployees(data.employees || []);
-    } catch (e) { console.error("Err loading employees", e); }
+    } catch (e) {
+      console.error("Err loading employees", e);
+    }
   }, []);
 
   const loadTasks = useCallback(async (db: string) => {
@@ -41,7 +43,9 @@ export default function TasksPage() {
       const res = await fetch(`/api/tasks/list?db=${db}`);
       const data = await res.json();
       setTasks(data.tasks || []);
-    } catch (e) { console.error("Err loading tasks", e); }
+    } catch (e) {
+      console.error("Err loading tasks", e);
+    }
   }, []);
 
   useEffect(() => {
@@ -54,8 +58,8 @@ export default function TasksPage() {
   async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
-    
-    if (!company?.dbName) return; 
+
+    if (!company?.dbName) return;
     setLoading(true);
 
     const form = e.currentTarget;
@@ -69,7 +73,7 @@ export default function TasksPage() {
         description: formData.get("description"),
         assignedTo: formData.get("assignedTo"),
         dueDate: formData.get("dueDate"),
-        companyDb: company.dbName, 
+        companyDb: company.dbName,
       }),
     });
 
@@ -82,55 +86,123 @@ export default function TasksPage() {
     }
     setLoading(false);
   }
-  if (!company) return <div className="p-8 text-slate-400 animate-pulse">Loading workspace...</div>;
+  if (!company)
+    return (
+      <div className="p-8 text-muted-foreground animate-pulse">
+        Loading workspace...
+      </div>
+    );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-500">
       <div className="lg:col-span-5 space-y-6">
-        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl">
-          <h2 className="text-xl font-bold text-slate-900 mb-6">Assign New Task</h2>
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Assign New Task
+          </h2>
           <form onSubmit={handleCreate} className="space-y-4">
-            <input name="title" placeholder="Task Title" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500" required />
-            <textarea name="description" placeholder="Short description..." className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 h-24 resize-none" />
-            
-            <select name="assignedTo" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white" required>
-              <option value="">Choose Employee</option>
-              {employees.map((e) => (
-                <option key={e._id} value={e.email}>{e.name} ({e.email})</option>
-              ))}
-            </select>
-            
-            <input type="date" name="dueDate" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500" />
-            <button disabled={loading} className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-lg disabled:opacity-70">
+            <div className="space-y-2">
+              <input
+                name="title"
+                placeholder="Task Title"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <textarea
+                name="description"
+                placeholder="Short description..."
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-y"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <select
+                name="assignedTo"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              >
+                <option value="">Choose Employee</option>
+                {employees.map((e) => (
+                  <option key={e._id} value={e.email}>
+                    {e.name} ({e.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <input
+                type="date"
+                name="dueDate"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            <button
+              disabled={loading}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 w-full"
+            >
               {loading ? "Creating..." : "Assign Task"}
             </button>
           </form>
-          {message && <p className="mt-4 text-emerald-600 font-bold text-center">{message}</p>}
+          {message && (
+            <p className="mt-4 text-emerald-600 font-medium text-sm text-center">
+              {message}
+            </p>
+          )}
         </div>
       </div>
 
       <div className="lg:col-span-7 space-y-6">
-        <h2 className="text-2xl font-bold text-slate-900">Task Overview</h2>
-        <div className="grid gap-4">
+        <h2 className="text-xl font-bold tracking-tight text-foreground">
+          Task Overview
+        </h2>
+        <div className="grid gap-3">
           {tasks.map((t) => (
-            <div key={t._id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h3 className="font-bold text-slate-800">{t.title}</h3>
-                <p className="text-sm text-slate-500 line-clamp-1 mb-2">{t.description}</p>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-slate-400">Assigned To:</span>
-                  <span className="text-xs bg-slate-100 px-2 py-0.5 rounded font-medium text-slate-600">{t.assignedTo}</span>
+            <div
+              key={t._id}
+              className="bg-card p-4 rounded-lg border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+            >
+              <div className="space-y-1">
+                <h3 className="font-semibold text-foreground">{t.title}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-1">
+                  {t.description}
+                </p>
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="text-xs text-muted-foreground">
+                    Assigned To:
+                  </span>
+                  <span className="text-xs bg-muted px-2 py-0.5 rounded font-medium text-foreground">
+                    {t.assignedTo}
+                  </span>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-tighter uppercase ${t.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' : t.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'}`}>
+              <div className="flex flex-col items-start md:items-end gap-2">
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${t.status === "COMPLETED"
+                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                      : t.status === "IN_PROGRESS"
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                >
                   {t.status}
                 </span>
-                <p className="text-[10px] text-slate-400 font-bold">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'No deadline'}</p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  {t.dueDate
+                    ? new Date(t.dueDate).toLocaleDateString()
+                    : "No deadline"}
+                </p>
               </div>
             </div>
           ))}
-          {tasks.length === 0 && <p className="text-center py-20 text-slate-400 font-medium bg-white rounded-3xl border border-dashed">No active tasks in {company.name} database.</p>}
+          {tasks.length === 0 && (
+            <p className="text-center py-12 text-muted-foreground font-medium border border-dashed border-border rounded-lg">
+              No active tasks in {company.name} database.
+            </p>
+          )}
         </div>
       </div>
     </div>

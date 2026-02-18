@@ -5,6 +5,7 @@ import { getEmployeeModel } from "../../../../../models/tenant/Employee";
 import { connectTenantDB } from "../../../../../lib/tenantDB";
 import { connectDB } from "../../../../../lib/db";
 import { Company } from "../../../../../models/Company";
+import { logAudit } from "../../../../../lib/AuditLogger";
 
 export async function POST(req: Request) {
   await connectDB();
@@ -29,7 +30,11 @@ export async function POST(req: Request) {
       password: hashed,
       position,
     });
-
+await logAudit({
+  email: email,
+  role: "EMPLOYEE",
+  action: "EMPLOYEE_CREATED",
+});
     await sendWelcomeEmail(
       contactEmail,      
       name,               

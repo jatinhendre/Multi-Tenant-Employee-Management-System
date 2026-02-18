@@ -8,6 +8,7 @@ import { User } from "../../../../../models/User";
 import { sendApprovalEmail } from "../../../../../lib/email";
 import { getEmployeeModel } from "../../../../../models/tenant/Employee";
 import bcrypt from "bcryptjs";
+import { logAudit } from "../../../../../lib/AuditLogger";
 
 export async function POST(req: Request) {
   await connectDB();
@@ -61,6 +62,11 @@ if (!admin) {
 
   pending.status = "APPROVED";
   await pending.save();
+  await logAudit({
+  email: pending.adminEmail,
+  role: "COMPANY_ADMIN",
+  action: "COMPANY_APPROVED",
+});
   await sendApprovalEmail(
   pending.contactEmail,
   pending.companyName

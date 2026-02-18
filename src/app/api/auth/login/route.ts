@@ -21,26 +21,66 @@ interface IUserAuth {
 
 export async function POST(req: Request) {
   await connectDB();
-  
+
   const { email, password, companyId } = await req.json();
   const systemUser = await User.findOne({ email });
+  const now = new Date();
 
+  if (  systemUser.lockUntil && systemUser.lockUntil > now) {
+    return NextResponse.json(
+      { message: "Account locked. Try again later." },
+      { status: 403 }
+    );
+  }
   if (systemUser) {
     const isMatch = await bcrypt.compare(password, systemUser.password);
-    if (!isMatch) return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+    if (!isMatch) {
+      systemUser.failedLoginAttempts += 1;
 
+      await logAudit({
+        email: systemUser.email,
+        role: systemUser.role,
+        action: "FAILED_LOGIN_ATTEMPT",
+         ipAddress:req.headers.get("x-forwarded-for") || "unknown",
+          userAgent: req.headers.get("user-agent") || "unknown",
+      });
+
+      // Lock account after 5 attempts
+      if (systemUser.failedLoginAttempts >= 5) {
+        systemUser.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+        await logAudit({
+          email: systemUser.email,
+          role: systemUser.role,
+          action: "ACCOUNT_LOCKED",
+          ipAddress:req.headers.get("x-forwarded-for") || "unknown",
+          userAgent: req.headers.get("user-agent") || "unknown",
+        });
+      }
+
+      await systemUser.save();
+
+      return NextResponse.json(
+        { message: "Invalid credentials" },
+        { status: 401 }
+      );
+    }
+    systemUser.failedLoginAttempts = 0;
+systemUser.lockUntil = null;
+
+await systemUser.save();
     let companyMetadata: ICompanyAuth | null = null;
     if (systemUser.role === "COMPANY_ADMIN") {
       companyMetadata = (await Company.findById(systemUser.company).lean()) as ICompanyAuth | null;
     }
     await logAudit({
-  userId: systemUser._id.toString(),
-  email: systemUser.email,
-  role: systemUser.role,
-  action: "USER_LOGIN",
-  ipAddress: req.headers.get("x-forwarded-for") || "unknown",
-  userAgent: req.headers.get("user-agent") || "unknown",
-});
+      userId: systemUser._id.toString(),
+      email: systemUser.email,
+      role: systemUser.role,
+      action: "USER_LOGIN",
+      ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+      userAgent: req.headers.get("user-agent") || "unknown",
+    });
     return createAuthResponse(systemUser, companyMetadata);
   }
 
@@ -61,15 +101,50 @@ export async function POST(req: Request) {
   }
 
   const isEmployeeMatch = await bcrypt.compare(password, employee.password);
-  if (!isEmployeeMatch) return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+
+  if (!isEmployeeMatch) {
+  employee.failedLoginAttempts += 1;
+
   await logAudit({
-  userId: employee._id.toString(),
-  email: employee.email,
-  role: employee.role,
-  action: "USER_LOGIN",
-  ipAddress: req.headers.get("x-forwarded-for") || "unknown",
-  userAgent: req.headers.get("user-agent") || "unknown",
-});
+    email: employee.email,
+    role: employee.role,
+    action: "FAILED_LOGIN_ATTEMPT",
+    ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+      userAgent: req.headers.get("user-agent") || "unknown",
+  });
+
+  // Lock account after 5 attempts
+  if (employee.failedLoginAttempts >= 5) {
+    employee.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    await logAudit({
+      email: employee.email,
+      role: employee.role,
+      action: "ACCOUNT_LOCKED",
+      ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+      userAgent: req.headers.get("user-agent") || "unknown",
+    });
+  }
+
+  await employee.save();
+
+  return NextResponse.json(
+    { message: "Invalid credentials" },
+    { status: 401 }
+  );
+}
+  await logAudit({
+    userId: employee._id.toString(),
+    email: employee.email,
+    role: employee.role,
+    action: "USER_LOGIN",
+    ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+    userAgent: req.headers.get("user-agent") || "unknown",
+  });
+  employee.failedLoginAttempts = 0;
+employee.lockUntil = null;
+
+await employee.save();
   return createAuthResponse(employee, targetCompany);
 }
 
@@ -77,30 +152,30 @@ function createAuthResponse(userData: IUserAuth, company: ICompanyAuth | null) {
   const accesstoken = generateAccessToken({
     email: userData.email,
     role: userData.role || "EMPLOYEE",
-    dbName: company?.dbName || "" 
+    dbName: company?.dbName || ""
   });
   const refreshtoken = generateRefreshToken({
     email: userData.email,
     role: userData.role || "EMPLOYEE",
-    dbName: company?.dbName || "" 
+    dbName: company?.dbName || ""
   });
 
   const res = NextResponse.json({
     message: "Login success",
     role: userData.role || "EMPLOYEE",
-    company: company 
+    company: company
   });
   console.log(res);
-  res.cookies.set("accessToken", accesstoken, { 
-    httpOnly: false, 
+  res.cookies.set("accessToken", accesstoken, {
+    httpOnly: false,
     path: "/",
     sameSite: "lax"
-  }); 
+  });
   res.cookies.set("refreshToken", refreshtoken, {
-    httpOnly: true, 
+    httpOnly: true,
     path: "/",
     sameSite: "lax"
-  }); 
-  
+  });
+
   return res;
 }

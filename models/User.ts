@@ -5,6 +5,8 @@ export interface IUser extends Document {
   password: string;
   company: Schema.Types.ObjectId;
   role: "SUPERADMIN" | "COMPANY_ADMIN" | "EMPLOYEE";
+  failedLoginAttempts: number;
+  lockUntil: Date;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -18,7 +20,16 @@ const UserSchema = new Schema<IUser>({
   company:{
     type: Schema.Types.ObjectId,
     ref: "Company"
-  }
+  },
+  failedLoginAttempts: {
+  type: Number,
+  default: 0,
+},
+
+lockUntil: {
+  type: Date,
+  default: null,
+},
 });
 
 export const User =

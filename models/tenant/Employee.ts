@@ -8,6 +8,8 @@ export interface IEmployee {
   position: string;
   status: "ACTIVE" | "INACTIVE";
   createdAt: Date;
+  failedLoginAttempts: number;
+  lockUntil: Date;
 }
 
 export const EmployeeSchema = new Schema<IEmployee>({
@@ -18,6 +20,15 @@ export const EmployeeSchema = new Schema<IEmployee>({
   role: { type: String, default: "EMPLOYEE" },
   status: { type: String, enum: ["ACTIVE", "INACTIVE"], default: "ACTIVE" },
   createdAt: { type: Date, default: Date.now },
+  failedLoginAttempts: {
+  type: Number,
+  default: 0,
+},
+
+lockUntil: {
+  type: Date,
+  default: null,
+},
 });
 
 // Helper to get model from a tenant connection

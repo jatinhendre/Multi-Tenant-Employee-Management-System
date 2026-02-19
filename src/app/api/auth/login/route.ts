@@ -7,6 +7,8 @@ import { getEmployeeModel } from "../../../../../models/tenant/Employee";
 import bcrypt from "bcryptjs";
 import { generateAccessToken, generateRefreshToken } from "../../../../../lib/token";
 import { logAudit } from "../../../../../lib/AuditLogger";
+import { LoginHistory } from "../../../../../models/LoginHistory";
+import { checkRateLimit } from "../../../../../lib/rateLimiter";
 
 interface ICompanyAuth {
   _id: unknown;
@@ -22,10 +24,31 @@ interface IUserAuth {
 export async function POST(req: Request) {
   await connectDB();
 
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  const ipAddress =
+  forwardedFor?.split(",")[0].trim() ||
+  req.headers.get("x-real-ip") ||
+  "unknown";
+  const rateLimit = await checkRateLimit(ipAddress, 10, 60 * 1000);
+
   const { email, password, companyId } = await req.json();
   const systemUser = await User.findOne({ email });
   const now = new Date();
+  
+if (!rateLimit.allowed) {
+  await logAudit({
+    action: "RATE_LIMIT_EXCEEDED",
+    ipAddress,
+    systemUser,
+  });
 
+  return NextResponse.json(
+    {
+      message: "Too many login attempts. Please try again later.",
+    },
+    { status: 429 }
+  );
+}
   if (  systemUser.lockUntil && systemUser.lockUntil > now) {
     return NextResponse.json(
       { message: "Account locked. Try again later." },
@@ -45,7 +68,6 @@ export async function POST(req: Request) {
           userAgent: req.headers.get("user-agent") || "unknown",
       });
 
-      // Lock account after 5 attempts
       if (systemUser.failedLoginAttempts >= 5) {
         systemUser.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
@@ -145,6 +167,28 @@ await systemUser.save();
 employee.lockUntil = null;
 
 await employee.save();
+const existingLogin = await LoginHistory.findOne({
+  userId: employee._id.toString(),
+  ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+});
+
+if (!existingLogin) {
+  await logAudit({
+    userId: employee._id.toString(),
+    email: employee.email,
+    role: employee.role,
+    action: "SUSPICIOUS_LOGIN",
+    ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+    userAgent: req.headers.get("user-agent") || "unknown",
+  });
+    await LoginHistory.create({
+  userId: employee._id.toString(),
+  email: employee.email,
+  ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+  userAgent: req.headers.get("user-agent") || "unknown",
+});
+}
+
   return createAuthResponse(employee, targetCompany);
 }
 
